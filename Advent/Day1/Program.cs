@@ -14,8 +14,10 @@ namespace Day1
             StreamReader streamReader = new StreamReader("../../input.txt");
             List<int> list1 = new List<int>();
             int currentPosition = 0;
-            bool resultFound = false;
-            int multiplyValue = 0;
+            bool firstResultFound = false;
+            bool secondResultFound = false;
+            int multiplyTwoValue = 0;
+            int multiplyThreeValue = 0;
 
             while (streamReader.Peek() > 0)
             {
@@ -26,18 +28,36 @@ namespace Day1
             {
                 for (int i = currentPosition + 1; i < list1.ToArray().Count(); i++)
                 {
-                    if (list1.ElementAt(i) + list1.ElementAt(currentPosition) == 2020)
+                    if (!firstResultFound)
                     {
-                        resultFound = true;
-                        multiplyValue = list1.ElementAt(i++) * list1.ElementAt(currentPosition);
-                        break;
+                        if (list1.ElementAt(i) + list1.ElementAt(currentPosition) == 2020)
+                        {
+                            firstResultFound = true;
+                            multiplyTwoValue = list1.ElementAt(i) * list1.ElementAt(currentPosition);
+                        }
                     }
+
+                    if (!secondResultFound)
+                    {
+                        for (int k = i + 1; k < list1.Count - 2; k++)
+                        {
+                            if (list1.ElementAt(i) + list1.ElementAt(k) + list1.ElementAt(currentPosition) == 2020)
+                            {
+                                secondResultFound = true;
+                                multiplyThreeValue = list1.ElementAt(i) * list1.ElementAt(k) * list1.ElementAt(currentPosition);
+                            }
+                        }
+                    }
+
+                    if (firstResultFound & secondResultFound)
+                        break;
                 }
-                if (resultFound)
+                if (firstResultFound & secondResultFound)
                     break;
                 currentPosition++;
             }
-            Console.WriteLine(multiplyValue);
+            Console.WriteLine(multiplyTwoValue);
+            Console.WriteLine(multiplyThreeValue);
             Console.ReadKey();
         }
     }
