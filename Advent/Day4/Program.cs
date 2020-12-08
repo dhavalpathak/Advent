@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Day4
@@ -26,7 +27,8 @@ namespace Day4
                 {
                     list1.Add(item);
                     item = "";
-                } else
+                }
+                else
                 {
                     item += " " + tmp;
                 }
@@ -46,25 +48,68 @@ namespace Day4
                     switch (keyValu[0])
                     {
                         case "byr":
-                            pass.Byr = keyValu[1];
+                            if (System.Convert.ToInt32(keyValu[1]) >= 1920 && System.Convert.ToInt32(keyValu[1]) <= 2002)
+                            {
+                                pass.Byr = keyValu[1];
+                            }
                             break;
                         case "iyr":
-                            pass.Iyr = keyValu[1];
+                            if (System.Convert.ToInt32(keyValu[1]) >= 2010 && System.Convert.ToInt32(keyValu[1]) <= 2020)
+                            {
+                                pass.Iyr = keyValu[1];
+                            }
                             break;
                         case "eyr":
-                            pass.Eyr = keyValu[1];
+                            if (System.Convert.ToInt32(keyValu[1]) >= 2020 && System.Convert.ToInt32(keyValu[1]) <= 2030)
+                            {
+                                pass.Eyr = keyValu[1];
+                            }
                             break;
                         case "hgt":
-                            pass.Hgt = keyValu[1];
+                            if (keyValu[1].ToLower().EndsWith("cm"))
+                            {
+                                if (System.Convert.ToInt32(keyValu[1].Substring(0, keyValu[1].Length - 2)) >= 150 && System.Convert.ToInt32(keyValu[1].Substring(0, keyValu[1].Length - 2)) <= 193)
+                                {
+                                    pass.Hgt = keyValu[1];
+                                }
+                            }
+                            else if (keyValu[1].ToLower().EndsWith("in"))
+                            {
+                                if (System.Convert.ToInt32(keyValu[1].Substring(0, keyValu[1].Length - 2)) >= 59 && System.Convert.ToInt32(keyValu[1].Substring(0, keyValu[1].Length - 2)) <= 76)
+                                {
+                                    pass.Hgt = keyValu[1];
+                                }
+                            }
                             break;
                         case "hcl":
-                            pass.Hcl = keyValu[1];
+                            if (keyValu[1].StartsWith("#") && keyValu[1].Trim().Length == 7)
+                            {
+                                Match match = Regex.Match(keyValu[1].Substring(1), "[0-9a-z]");
+                                if (match.Success)
+                                {
+                                    pass.Hcl = keyValu[1];
+                                }
+                            }
                             break;
                         case "ecl":
-                            pass.Ecl = keyValu[1];
+                            if (keyValu[1] == "amb" || keyValu[1] == "blu" ||
+                                keyValu[1] == "brn" || keyValu[1] == "gry" ||
+                                keyValu[1] == "grn" || keyValu[1] == "hzl" ||
+                                keyValu[1] == "oth")
+
+                            {
+                                pass.Ecl = keyValu[1];
+                            }
                             break;
                         case "pid":
-                            pass.Pid = keyValu[1];
+                            if (keyValu[1].Trim().Length == 9)
+                            {
+                                Match match = Regex.Match(keyValu[1].Substring(1), "[0-9]");
+                                if (match.Success)
+                                {
+                                    pass.Pid = keyValu[1];
+                                }
+                            }
                             break;
                         case "cid":
                             pass.Cid = keyValu[1];
@@ -77,7 +122,7 @@ namespace Day4
             }
 
             isValid = passList.Count;
-            
+
             foreach (Passport pass in passList)
             {
                 foreach (PropertyInfo propertyInfo in pass.GetType().GetProperties())
